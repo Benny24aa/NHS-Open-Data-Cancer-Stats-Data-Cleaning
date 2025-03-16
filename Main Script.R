@@ -7,7 +7,10 @@ Cancer_Data_Mortality_CA <- Cancer_Data_Mortality_CA %>%
   rename(GeoCode = CA)
 
 Cancer_Data_Mortality_HB <- full_join(Cancer_Data_Mortality_HB, HB_Lookup, by = "HB") %>% 
-  mutate(DataTye = "Mortality")
+  mutate(DataTye = "Mortality") %>% 
+  rename(GeoCode = HB, GeoName = HBName)
 
 Cancer_Data_Mortality_CA <- full_join(Cancer_Data_Mortality_CA, Council_Lookup, by = "GeoCode") %>% 
   mutate(DataTye = "Mortality")
+
+Cancer_Mortality <- bind_rows(Cancer_Data_Mortality_CA, Cancer_Data_Mortality_HB)
