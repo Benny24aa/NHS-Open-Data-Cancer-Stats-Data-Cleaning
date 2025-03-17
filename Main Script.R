@@ -22,12 +22,18 @@ Cancer_Data_Mortality_CRN <- Cancer_Data_Mortality_CRN %>%
 Cancer_Mortality <- bind_rows(Cancer_Data_Mortality_CA, Cancer_Data_Mortality_HB, Cancer_Data_Mortality_CRN) 
 
 Cancer_Mortality_Cleaned <- Cancer_Mortality %>%
-  select(GeoCode, CancerSiteICD10Code, CancerSite, Sex, Year, DeathsAllAges, CrudeRate, EASR, WASR, StandardisedMortalityRatio, GeoName, GeoType, DataType)
+  select(GeoCode, CancerSiteICD10Code, CancerSite, Sex, Year, DeathsAllAges, CrudeRate, EASR, WASR, StandardisedMortalityRatio, GeoName, GeoType, DataType) %>% 
+  rename(AllAges = DeathsAllAges, StandardisedRatio = StandardisedMortalityRatio )
 
 
 Cancer_Data_Incidence_HB <- full_join(Cancer_Data_Incidence_HB, HB_Lookup, by = "HB") %>% 
   mutate(DataType = "Incidence") %>% 
-  rename(GeoCode = HB, GeoName = HBName)
+  rename(GeoCode = HB, GeoName = HBName, AllAges = IncidencesAllAges, StandardisedRatio = StandardisedIncidenceRatio)
 
-write_xlsx(Cancer_Mortality_Cleaned, "weekly_mortality.xlsx")
+Cancer_Data_Incidence_Cleaned <- Cancer_Data_Incidence_HB %>% 
+  select(GeoCode, CancerSiteICD10Code, CancerSite, Sex, Year, AllAges, CrudeRate, EASR, WASR, StandardisedRatio, GeoName, GeoType, DataType) 
+  
+Cancer_Full_Data <- bind_rows(Cancer_Data_Incidence_Cleaned, Cancer_Mortality_Cleaned)
+
+write_xlsx(Cancer_Full_Data, "cancer_data.xlsx")
 
