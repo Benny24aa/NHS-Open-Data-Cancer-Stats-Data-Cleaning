@@ -58,3 +58,7 @@ Cancer_HB_ScatterPlot_Incidence <- Cancer_Data_Incidence_HB %>%
 
 Cancer_HB_ScatterPlot_Mortality <- Cancer_Data_Mortality_HB %>% 
   select(GeoName, GeoCode, CancerSiteICD10Code, CancerSite, Sex, Year, DeathsAllAges)
+
+# Cancer_Scatter_Data <- left_join(Cancer_HB_ScatterPlot_Mortality, Cancer_HB_ScatterPlot_Incidence, by = c("GeoName", "GeoCode", "CancerSiteICD10Code", "CancerSite", "Sex", "Year")) %>% 
+#   filter(!is.na(DeathsAllAges))
+ 
