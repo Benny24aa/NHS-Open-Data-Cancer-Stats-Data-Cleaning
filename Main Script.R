@@ -4,6 +4,7 @@ Cancer_Data_Mortality_CA <- get_resource(res_id = "eebc8f38-7297-4bdc-a417-69ce3
 Cancer_Data_Mortality_CRN <- get_resource(res_id = "9574c0f8-c780-49d8-810a-46fa76567fb3")
 Cancer_Data_Incidence_HB <- get_resource(res_id = "3aef16b7-8af6-4ce0-a90b-8a29d6870014")
 Cancer_Data_Incidence_CRN <- get_resource(res_id = "8cba0250-7e78-496d-8559-98c9c9a3d3e3")
+library(janitor)
 
 Cancer_Data_Mortality_CA <- Cancer_Data_Mortality_CA %>% 
   rename(GeoCode = CA)
@@ -54,11 +55,17 @@ write_xlsx(Cancer_Full_Data, "cancer_data.xlsx")
 #####################################
 
 Cancer_HB_ScatterPlot_Incidence <- Cancer_Data_Incidence_HB %>% 
-  select(GeoName, GeoCode, CancerSiteICD10Code, CancerSite, Sex, Year, AllAges)
-
+  select(GeoName, GeoCode, CancerSiteICD10Code, CancerSite, Sex, Year, AllAges) %>% 
+  mutate(Data = "Incidence")
+  
 Cancer_HB_ScatterPlot_Mortality <- Cancer_Data_Mortality_HB %>% 
-  select(GeoName, GeoCode, CancerSiteICD10Code, CancerSite, Sex, Year, DeathsAllAges)
+  select(GeoName, GeoCode, CancerSiteICD10Code, CancerSite, Sex, Year, DeathsAllAges) %>% 
+  mutate(Data2 = "Mortality")
 
-# Cancer_Scatter_Data <- left_join(Cancer_HB_ScatterPlot_Mortality, Cancer_HB_ScatterPlot_Incidence, by = c("GeoName", "GeoCode", "CancerSiteICD10Code", "CancerSite", "Sex", "Year")) %>% 
-#   filter(!is.na(DeathsAllAges))
- 
+
+ Cancer_Scatter_Data <- left_join(Cancer_HB_ScatterPlot_Mortality, Cancer_HB_ScatterPlot_Incidence, by = c("GeoName", "GeoCode", "CancerSiteICD10Code", "CancerSite", "Sex", "Year")) %>% 
+  mutate(complied = Data2 == "Mortality" & Data == "Incidence") %>% 
+  filter(complied == TRUE) %>% 
+  select(-Data2, -Data, -complied) 
+   
+ write_xlsx(Cancer_Scatter_Plot, "cancer_scatter_plot.xlsx")
